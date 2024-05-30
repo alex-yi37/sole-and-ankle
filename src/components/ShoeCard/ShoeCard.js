@@ -31,6 +31,8 @@ const ShoeCard = ({
       ? 'new-release'
       : 'default'
 
+  const hasSale = salePrice !== null && salePrice !== undefined;
+
   return (
     <Link href={`/shoe/${slug}`}>
       <Wrapper>
@@ -40,11 +42,17 @@ const ShoeCard = ({
         <Spacer size={12} />
         <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+          <Price hasSale={hasSale}>{formatPrice(price)}</Price>
         </Row>
         <Row>
-          <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
+          <ColorInfo>{pluralize("Color", numOfColors)}</ColorInfo>
+          {hasSale ? <SalePrice>{formatPrice(salePrice)}</SalePrice> : null}
         </Row>
+        {variant === "on-sale" ? (
+          <SaleTag>Sale</SaleTag>
+        ) : variant === "new-release" ? (
+          <NewReleaseTag>Just released!</NewReleaseTag>
+        ) : null}
       </Wrapper>
     </Link>
   );
@@ -56,7 +64,9 @@ const Link = styled.a`
   flex: 1 1 400px;
 `;
 
-const Wrapper = styled.article``;
+const Wrapper = styled.article`
+  position: relative;
+`;
 
 const ImageWrapper = styled.div`
   position: relative;
@@ -69,6 +79,8 @@ const Image = styled.img`
 
 const Row = styled.div`
   font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const Name = styled.h3`
@@ -76,7 +88,11 @@ const Name = styled.h3`
   color: ${COLORS.gray[900]};
 `;
 
-const Price = styled.span``;
+const Price = styled.span`
+  text-decoration: ${(props) => {
+    return props.hasSale ? "line-through" : "initial";
+  }};
+`;
 
 const ColorInfo = styled.p`
   color: ${COLORS.gray[700]};
@@ -85,6 +101,30 @@ const ColorInfo = styled.p`
 const SalePrice = styled.span`
   font-weight: ${WEIGHTS.medium};
   color: ${COLORS.primary};
+`;
+
+// InfoTag to represent the variant for a shoe. Text options are:
+// "Just released!" | "Sale"
+// in the case of the default variant, don't display the component
+const SaleTag = styled.span`
+  background: ${COLORS.primary};
+  color: ${COLORS.white};
+  font-weight: ${WEIGHTS.medium};
+  padding: 8px;
+  position: absolute;
+  top: 16px;
+  right: -8px;
+  border-radius: 4px;
+`;
+const NewReleaseTag = styled.span`
+  background: ${COLORS.secondary};
+  color: ${COLORS.white};
+  font-weight: ${WEIGHTS.medium};
+  padding: 8px;
+  position: absolute;
+  top: 16px;
+  right: -8px;
+  border-radius: 4px;
 `;
 
 export default ShoeCard;
